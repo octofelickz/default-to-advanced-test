@@ -1,6 +1,6 @@
-import ssl
+import ssl 
 from OpenSSL import SSL
-from ssl import SSLContext
+from ssl import SSLContext 
 
 # insecure versions specified 
 ssl.wrap_socket(ssl_version=ssl.PROTOCOL_SSLv2)
