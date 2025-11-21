@@ -104,6 +104,7 @@ jobs:
       with:
         name: codeql-sarif-${{ matrix.language }}
         path: sarif-results/${{ matrix.language }}.sarif
+        if-no-files-found: warn
 
     - name: Upload SARIF to GitHub
       uses: github/codeql-action/upload-sarif@v3
@@ -113,7 +114,7 @@ jobs:
 
     - name: Install sarif-tools
       run: |
-        pip install sarif-tools
+        pip install sarif-tools==2.0.0
 
     - name: Generate SARIF HTML report
       run: |
@@ -124,3 +125,4 @@ jobs:
       with:
         name: sarif-html-report-${{ matrix.language }}
         path: sarif_${{ matrix.language }}.html
+        if-no-files-found: warn
