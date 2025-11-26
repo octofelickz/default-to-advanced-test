@@ -96,3 +96,36 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+        output: sarif-results
+        upload: false
+
+    - name: Upload SARIF as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: codeql-sarif-${{ matrix.language }}
+        path: sarif-results/${{ matrix.language }}.sarif
+        if-no-files-found: warn
+
+    - name: Upload SARIF to GitHub
+      if: hashFiles('sarif-results/${{ matrix.language }}.sarif') != ''
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: sarif-results/${{ matrix.language }}.sarif
+        category: "/language:${{matrix.language}}"
+
+    - name: Install sarif-tools
+      run: |
+        pip install sarif-tools==2.0.0
+
+    - name: Generate SARIF HTML report
+      if: hashFiles('sarif-results/${{ matrix.language }}.sarif') != ''
+      run: |
+        sarif html --output ./sarif_${{ matrix.language }}.html --no-autotrim sarif-results/${{ matrix.language }}.sarif
+
+    - name: Upload SARIF HTML report
+      if: hashFiles('sarif_${{ matrix.language }}.html') != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: sarif-html-report-${{ matrix.language }}
+        path: sarif_${{ matrix.language }}.html
+        if-no-files-found: warn
